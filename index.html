@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<title>Reaction Diffusion
+	</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+	<div class="container">
+		<canvas></canvas>
+		<a id="hideShow" href="#">Menu ↓</a>
+		<div class="menu">
+			<label for="difA">Diffusion Chemical A</label>
+			<input id="difA"  class="mySlider rgb" type="range" min="0" max="100" value="100"><br>
+			<label for="difB">Diffusion Chemical B</label>
+			<input id="difB"  class="mySlider rgb" type="range" min="0" max="100" value="50"><br>
+			<label for="feed">Feed A</label>
+			<input id="feed"  class="mySlider rgb" type="range" min="0" max="100" value="50"><br>
+			<label for="kill">Kill B</label>
+			<input id="kill"  class="mySlider rgb" type="range" min="0" max="100" value="55"><br>
+			<label for="">A is orange, B is blue</label>
+			<label for="">B eats A to reproduce</label>
+			<label for="">B dies after some time</label>
+			<label for="">A never dies, and it's fed to the system</label>
+			<label for="">You can click to give B</label>
+			<label for="">And right click to kill B</label>
+		</div>
+	</div>
+	<p style="color: white; position: absolute; top: 50%; left: 50%;" id="debug"></p>
+	<script type="text/javascript" src="GPUjs/gpu-browser.min.js"></script>
+	<script type="text/javascript" src="js/util.js"></script>
+	<script type="text/javascript" src="js/reactDiffuse.js"></script>
+	<script type="text/javascript" src="js/eventHandler.js"></script>
+</body>
+</html>
