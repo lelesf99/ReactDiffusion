@@ -34,7 +34,8 @@ canvas{
 .menu{
 	position: absolute;
 	display: flex;
-	flex-direction: column;
+	flex-wrap: wrap;
+	width: 350px;
 	height: 0px;
 	opacity: 0%;
 	top: 100px;
@@ -80,13 +81,15 @@ canvas{
 }
 .mySlider{
 	height: 15px;
+	width: calc(100% - 20px);
 	-webkit-appearance: none;
 	color: #fff;
 	background-color: #585D7D;
 	border-radius: 10px;
 }
 .mySlider.rgb{
-  margin: 25px 10px 0 10px;
+  margin: 25px 10px 25px 10px;
+  width: calc(50% - 20px);
 }
 .mySlider::-webkit-slider-thumb {
 	-webkit-appearance: none;

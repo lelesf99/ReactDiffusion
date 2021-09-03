@@ -5,6 +5,9 @@ var difB = document.querySelector('#difB');
 var feedA= document.querySelector('#feed');
 var killB= document.querySelector('#kill');
 
+var rangeSlider= document.querySelector('#range');
+var offSlider= document.querySelector('#offset');
+
 hideShow.addEventListener('click', (event) => {
 	event.preventDefault();
 	if(menu.classList.contains('show')) {
@@ -65,4 +68,10 @@ feedA.addEventListener('input', () => {
 });
 killB.addEventListener('input', () => {
 	kill = map(killB.value, 0, 100, 0.02, 0.08);
+});
+rangeSlider.addEventListener('input', () => {
+	range = map(rangeSlider.value, 0, 100, 1, 2);
+});
+offSlider.addEventListener('input', () => {
+	offset = map(offSlider.value, 0, 100, 0.5, 1);
 });

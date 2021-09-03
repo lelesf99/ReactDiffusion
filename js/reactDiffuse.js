@@ -11,6 +11,9 @@ let DiffusionB = 0.5;
 let feed = 0.045;
 let kill = 0.060;
 
+let range = 1;
+let offset = 0.5;
+
 for (let i = 0; i < width; i++) {
 	curGrid[i] = [];
 	for (let j = 0; j < height; j++) {
@@ -52,19 +55,19 @@ function animate() {
 			kill
 		);
 	}
-	render();
+	render(range, offset);
 	ctx.drawImage(offCanvas, 0, 0);
 }
 animate();
 
-function render() {
+function render(range, offset) {
 	const imageData = offCtx.createImageData(width, height);
 	let k = 0;
 	for (let i = 0; i < width; i++) {
 		for (let j = 0; j < height; j++) {
 			k = (i + j * width) * 4
 
-			let col = HSVtoRGB(curGrid[i][j][1] * Math.PI/2, 1, 1);
+			let col = HSVtoRGB(curGrid[i][j][1] * range + offset, 1, 1);
 
 			//if(bright < 0)bright *= -1;
 			imageData.data[k + 0] = col.r * (1 - curGrid[i][j][0]);  // R value
@@ -151,8 +154,8 @@ function addB(x, y) {
 	}	
 }
 function remB(x, y) {
-	for (let i = x-10; i < x+10; i++) {
-		for (let j = y-10; j < y+10; j++) {
+	for (let i = x-20; i < x+20; i++) {
+		for (let j = y-20; j < y+20; j++) {
 			if(i <= 0 || i >= width-1 || j <= 0 || j >= height-1) {
 				continue;
 			} else {
