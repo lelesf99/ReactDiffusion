@@ -3,23 +3,22 @@ var height = 600;
 
 var curGrid = [];
 var nxtGrid = [];
-var Binit = [1, 11];
+var Binit = [50, 100];
 let step = 1;
 
 let DiffusionA = 1;
-let DiffusionB = 0.4;
+let DiffusionB = 0.5;
 let feed = 0.045;
-let kill = 0.068;
-
-
+let kill = 0.060;
 
 for (let i = 0; i < width; i++) {
 	curGrid[i] = [];
 	for (let j = 0; j < height; j++) {
-		if( i > width/2 - Binit[0] && i < width/2 + Binit[0] && j > height/2 - Binit[1] && j < height/2 + Binit[1]){
+		let d = new Vector2(i, j).dist(new Vector2(width/2, height/2));
+		if(d + Math.random() * 100 > Binit[0] && d + Math.random() * 100 < Binit[1]){
 			curGrid[i][j] = [
 				0, 
-				1,
+				Math.random(),
 				0,
 				0
 			];
@@ -34,7 +33,8 @@ for (let i = 0; i < width; i++) {
 		
 	}
 }
-
+var offCanvas = new OffscreenCanvas(width, height);
+var offCtx = offCanvas.getContext('2d');
 canvas = document.querySelector('canvas');
 canvas.setAttribute('width', width);
 canvas.setAttribute('height', height);
@@ -42,6 +42,7 @@ ctx = canvas.getContext('2d');
 
 
 function animate() {
+	ctx.clearRect(0, 0, width, height);
 	myReq = requestAnimationFrame(animate);
 	for (let i = 0; i < step; i++) {
 		swapCalc(
@@ -52,24 +53,27 @@ function animate() {
 		);
 	}
 	render();
+	ctx.drawImage(offCanvas, 0, 0);
 }
 animate();
 
 function render() {
-	const imageData = ctx.createImageData(width, height);
+	const imageData = offCtx.createImageData(width, height);
 	let k = 0;
 	for (let i = 0; i < width; i++) {
 		for (let j = 0; j < height; j++) {
 			k = (i + j * width) * 4
-			//bright = 255 * (curGrid[i][j][0]) - (curGrid[i][j][1]) / 2;
+
+			let col = HSVtoRGB(curGrid[i][j][1] * Math.PI/2, 1, 1);
+
 			//if(bright < 0)bright *= -1;
-			imageData.data[k + 0] = curGrid[i][j][0] * 250;  // R value
-			imageData.data[k + 1] = 100;  // G value
-			imageData.data[k + 2] = curGrid[i][j][1] * 250;  // B value
+			imageData.data[k + 0] = col.r * (1 - curGrid[i][j][0]);  // R value
+			imageData.data[k + 1] = col.g * (1 - curGrid[i][j][0]);  // G value
+			imageData.data[k + 2] = col.b * (1 - curGrid[i][j][0]);  // B value
 			imageData.data[k + 3] = 255;  // A value
 		}
 	}
-	ctx.putImageData(imageData, 0, 0);
+	offCtx.putImageData(imageData, 0, 0);
 }
 
 function swapCalc(
