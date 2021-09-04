@@ -20,8 +20,9 @@ hideShow.addEventListener('click', (event) => {
 	}
 });
 canvas.addEventListener('mousedown', (event) => {
-	restart();
-	// mediaRecorder.start();
+	intX = event.offsetX;
+	intY = event.offsetY;
+	restart(intX, intY);
 });
 difA.addEventListener('input', () => {
 	DiffusionA = map(difA.value, 0, 100, 0.5, 1.0);

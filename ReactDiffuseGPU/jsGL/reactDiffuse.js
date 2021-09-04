@@ -314,10 +314,11 @@ function animate() {
 }
 animate();
 
-function restart() {
+function restart(x, y) {
+	console.log(x, y);
 	for (let i = 0; i < width; i++) {
 		for (let j = 0; j < height; j++) {
-			let d = new Vector2(i, j).dist(new Vector2(width/2, height/2));
+			let d = new Vector2(i, j).dist(new Vector2(x, height - y));
 			if(d + Math.random() * 100 > Binit[0] && d + Math.random() * 100 < Binit[1]) {
 				normalData[(i + j * width) * 4 + 0] = 0;
 				normalData[(i + j * width) * 4 + 1] = 0;
