@@ -1,5 +1,5 @@
-let width =  900;
-let height = 900;
+let width =  1080;
+let height = 1080;
 
 let curGrid = [];
 let Binit = [10, 100];
@@ -9,6 +9,9 @@ let DiffusionA = 1.0;
 let DiffusionB = 0.4;
 let feed = 0.045;
 let kill = 0.060;
+
+let range = 1;
+let offset = 0.5;
 
 let vertexShaderSource = `#version 300 es
 
@@ -36,8 +39,8 @@ let computeFragmentShaderSource = `#version 300 es
 
 	void main() {
 		vec2 Fcd = vec2(
-				gl_FragCoord.x / 900.0, 
-				gl_FragCoord.y / 900.0
+				gl_FragCoord.x / 1080.0, 
+				gl_FragCoord.y / 1080.0
 			);
 
 		float A = texture(u_texture, Fcd).x;
@@ -82,21 +85,34 @@ let drawFragmentShaderSource = `#version 300 es
 	precision highp float;
 	
 	uniform sampler2D u_texture;
+	uniform float range;
+	uniform float offset;
 
 	out vec4 fragColor;
 
+	// Taken from http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl.
+	// All components are in the range [0…1], including hue.
+	vec3 hsv2rgb(vec3 c)
+	{
+		vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+		vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+		return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+	}
+	
 	void main() {
 		vec2 Fcd = vec2(
-				gl_FragCoord.x / 900.0, 
-				gl_FragCoord.y / 900.0
+				gl_FragCoord.x / 1080.0, 
+				gl_FragCoord.y / 1080.0
 			);
 
 		float A = texture(u_texture, Fcd).x;
 		float B = texture(u_texture, Fcd).z;
+		
+		vec3 Bcolor = hsv2rgb(vec3(B * range + offset, 1.0, 1.0));
 
 		// Divide the sum by the weight but just use rgb
 		// we'll set alpha to 1.0
-		fragColor = vec4(B * (1.0 - A) * 5.0, B * (1.0 - A) * 5.0, B * (1.0 - A) * 5.0, 1.0);
+		fragColor = vec4(Bcolor.x * (1.0 - A), Bcolor.y * (1.0 - A), Bcolor.z * (1.0 - A), 1.0);
 	}
 `;
 
@@ -222,6 +238,9 @@ let DiffusionBLoc = gl.getUniformLocation(computeProgram, 'DiffusionB');
 let feedLoc = gl.getUniformLocation(computeProgram, 'feed');
 let killLoc = gl.getUniformLocation(computeProgram, 'kill');
 
+let rangeLoc = gl.getUniformLocation(drawProgram, 'range');
+let offsetLoc = gl.getUniformLocation(drawProgram, 'offset');
+
 let verts = [
     -1.0,  1.0,
      1.0,  1.0,
@@ -281,6 +300,8 @@ function animate() {
 	gl.bindTexture(gl.TEXTURE_2D, textures[flipFlop]);
 
 	gl.uniform1i(samplerLocs[1], unit);
+	gl.uniform1f(rangeLoc, range);
+	gl.uniform1f(offsetLoc, offset);
 
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 

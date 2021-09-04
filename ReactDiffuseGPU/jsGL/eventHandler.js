@@ -6,6 +6,9 @@ var feedA= document.querySelector('#feed');
 var killB= document.querySelector('#kill');
 var stepSlider= document.querySelector('#steps');
 
+var rangeSlider= document.querySelector('#range');
+var offSlider= document.querySelector('#offset');
+
 hideShow.addEventListener('click', (event) => {
 	event.preventDefault();
 	if(menu.classList.contains('show')) {
@@ -18,6 +21,7 @@ hideShow.addEventListener('click', (event) => {
 });
 canvas.addEventListener('mousedown', (event) => {
 	restart();
+	// mediaRecorder.start();
 });
 difA.addEventListener('input', () => {
 	DiffusionA = map(difA.value, 0, 100, 0.5, 1.0);
@@ -30,6 +34,12 @@ feedA.addEventListener('input', () => {
 });
 killB.addEventListener('input', () => {
 	kill = map(killB.value, 0, 100, 0.045, 0.08);
+});
+rangeSlider.addEventListener('input', () => {
+	range = map(rangeSlider.value, 0, 100, 1, 2);
+});
+offSlider.addEventListener('input', () => {
+	offset = map(offSlider.value, 0, 100, 0.5, 1);
 });
 stepSlider.addEventListener('input', () => {
 	step = stepSlider.value;
