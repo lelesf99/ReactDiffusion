@@ -99,21 +99,32 @@ canvas{
 	background: #EEE;
 	cursor: pointer;
 }
-button{
-	appearance: none;
-	outline: none;
+.buttons{
+	position: absolute;
+	margin: auto;
+	transform: translate(-50%, -50%);
+	top: 50%;
+	left: 50%;
+	width: 50%;
+	display: flex;
+}
+.button{
+	text-decoration: none;
+	text-align: center;
+	display: inline-block;
+	color: black;
 	margin: 10px 0 10px 0;
-	padding: 0px;
+	padding: 15px 10px 15px 10px;
 	height: 50px;
 	border: none;
-	width: 20%;
+	width: calc(50% - 20px);
 	background-color: #EEE;
 	transition: all 0.1s;
 }
-button:hover{
+.button:hover{
 	background-color: #CCC;
 	cursor: pointer;
 }
-button:active{
+.button:active{
 	background-color: #FFF;
 }

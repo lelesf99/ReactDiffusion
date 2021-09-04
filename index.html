@@ -12,33 +12,10 @@
 </head>
 <body>
 	<div class="container">
-		<canvas></canvas>
-		<a id="hideShow" href="#">Menu ↓</a>
-		<div class="menu" >
-			<label for="difA">Diffusion Chemical A</label>
-			<input id="difA"  class="mySlider" type="range" min="0" max="100" value="100"><br>
-			<label for="difB">Diffusion Chemical B</label>
-			<input id="difB"  class="mySlider" type="range" min="0" max="100" value="50"><br>
-			<label for="feed">Feed A</label>
-			<input id="feed"  class="mySlider" type="range" min="0" max="100" value="50"><br>
-			<label for="kill">Kill B</label>
-			<input id="kill"  class="mySlider" type="range" min="0" max="100" value="55"><br>
-			<label for="range" style="width: 50%;">Color range</label>
-			<label for="offset" style="width: 50%;">Color offset</label>
-			<input id="range"  class="mySlider rgb" type="range" min="0" max="100" value="0"><br>
-			
-			<input id="offset"  class="mySlider rgb" type="range" min="0" max="100" value="0"><br>
-			<label for="">A is black, B is colored</label>
-			<label for="">B eats A to reproduce</label>
-			<label for="">B dies after some time</label>
-			<label for="">A never dies, and it's fed to the system</label>
-			<label for="">You can click to give B</label>
-			<label for="">And right click to kill B</label>
+		<div class="buttons">
+			<a id="CPU" class="button" type="button" href="ReactDiffuseCPU/index.html" style="border-radius: 3px 0 0 3px;">CPU version <br>(Way slower, but more control)</a>
+			<a id="GPU" class="button" type="button" href="ReactDiffuseGPU/index.html" style="border-radius: 0 3px 3px 0;">GPU version <br>(Way faster, but less control)</a>
 		</div>
 	</div>
-	<p style="color: white; position: absolute; top: 50%; left: 50%;" id="debug"></p>
-	<script type="text/javascript" src="js/util.js"></script>
-	<script type="text/javascript" src="js/reactDiffuse.js"></script>
-	<script type="text/javascript" src="js/eventHandler.js"></script>
 </body>
 </html>

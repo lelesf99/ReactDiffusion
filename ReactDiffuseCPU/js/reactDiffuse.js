@@ -33,7 +33,6 @@ for (let i = 0; i < width; i++) {
 				0
 			];
 		}
-		
 	}
 }
 var offCanvas = new OffscreenCanvas(width, height);

@@ -52,10 +52,10 @@ canvas.addEventListener('mousemove', (event) => {
 canvas.addEventListener('mouseup', (event) => {
     mousedown = false;
 });
-window.addEventListener('contextmenu', function (e) { 
-	// do something here... 
-	e.preventDefault(); 
-  }, false);
+// window.addEventListener('contextmenu', function (e) { 
+// 	// do something here... 
+// 	e.preventDefault(); 
+//   }, false);
 
 difA.addEventListener('input', () => {
 	DiffusionA = map(difA.value, 0, 100, 0.5, 1);
