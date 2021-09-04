@@ -315,7 +315,6 @@ function animate() {
 animate();
 
 function restart(x, y) {
-	console.log(x, y);
 	for (let i = 0; i < width; i++) {
 		for (let j = 0; j < height; j++) {
 			let d = new Vector2(i, j).dist(new Vector2(x, height - y));
