@@ -1,17 +1,19 @@
-var hideShow = document.querySelector("#hideShow");
-var menu = document.querySelector(".menu");
-var difA = document.querySelector('#difA');
-var difB = document.querySelector('#difB');
-var feedA= document.querySelector('#feed');
-var killB= document.querySelector('#kill');
-var stepSlider= document.querySelector('#steps');
+let hideShow = document.querySelector("#hideShow");
+let menu = document.querySelector(".menu");
+let difA = document.querySelector('#difA');
+let difB = document.querySelector('#difB');
+let feedA = document.querySelector('#feed');
+let killB = document.querySelector('#kill');
+let stepSlider = document.querySelector('#steps');
+let checkX = document.querySelector('#checkX');
+let checkY = document.querySelector('#checkY');
 
-var rangeSlider= document.querySelector('#range');
-var offSlider= document.querySelector('#offset');
+let rangeSlider = document.querySelector('#range');
+let offSlider = document.querySelector('#offset');
 
 hideShow.addEventListener('click', (event) => {
 	event.preventDefault();
-	if(menu.classList.contains('show')) {
+	if (menu.classList.contains('show')) {
 		menu.classList.remove('show');
 		hideShow.innerHTML = 'Menu ↓'
 	} else {
@@ -31,10 +33,10 @@ difB.addEventListener('input', () => {
 	DiffusionB = map(difB.value, 0, 100, 0.35, 1.0);
 });
 feedA.addEventListener('input', () => {
-	feed = map(feedA.value, 0, 100, 0.02, 0.08);
+	feed = map(feedA.value, 0, 100, 0.01, 0.09);
 });
 killB.addEventListener('input', () => {
-	kill = map(killB.value, 0, 100, 0.045, 0.08);
+	kill = map(killB.value, 0, 100, 0.01, 0.09);
 });
 rangeSlider.addEventListener('input', () => {
 	range = map(rangeSlider.value, 0, 100, 1, 2);
@@ -44,4 +46,10 @@ offSlider.addEventListener('input', () => {
 });
 stepSlider.addEventListener('input', () => {
 	step = stepSlider.value;
+});
+checkX.addEventListener('change', () => {
+	swtchX = (checkX.checked);
+});
+checkY.addEventListener('change', () => {
+	swtchY = (checkY.checked);
 });

@@ -1,4 +1,4 @@
-let width =  1080;
+let width = 1080;
 let height = 1080;
 
 let curGrid = [];
@@ -9,6 +9,8 @@ let DiffusionA = 1.0;
 let DiffusionB = 0.4;
 let feed = 0.045;
 let kill = 0.060;
+let swtchX = false;
+let swtchY = false;
 
 let range = 1;
 let offset = 0.5;
@@ -34,6 +36,8 @@ let computeFragmentShaderSource = `#version 300 es
 	uniform float DiffusionB;
 	uniform float feed;
 	uniform float kill;
+	uniform bool swtchX;
+	uniform bool swtchY;
 
 	out vec4 fragColor;
 
@@ -71,9 +75,22 @@ let computeFragmentShaderSource = `#version 300 es
 			texture(u_texture, Fcd + onePixel * vec2(-1,  1)).z * 0.05 +
 			texture(u_texture, Fcd + onePixel * vec2( 0,  1)).z * 0.2 +
 			texture(u_texture, Fcd + onePixel * vec2( 1,  1)).z * 0.05;
+		if(!(swtchX || swtchY)){
+			fA += (DiffusionA * LaplaceA - A * B * B + feed * (1.0 - A));
+			fB += (DiffusionB * LaplaceB + A * B * B - (kill + feed) * B);
+		} else if(swtchX && !swtchY) {
+			fA += (DiffusionA * LaplaceA - A * B * B + feed * (1.0 - A));
+			fB += (DiffusionB * LaplaceB + A * B * B - ((0.045 + kill * Fcd.x) + feed) * B);
+		} else if(swtchY && !swtchX) {
+			fA += (DiffusionA * LaplaceA - A * B * B + (0.01 + feed * Fcd.y) * (1.0 - A));
+			fB += (DiffusionB * LaplaceB + A * B * B - (kill + (0.01 + feed * Fcd.y)) * B);
+		} else {
+			fA += (DiffusionA * LaplaceA - A * B * B + (0.01 + feed * Fcd.y) * (1.0 - A));
+			fB += (DiffusionB * LaplaceB + A * B * B - ((0.045 + kill * Fcd.x) + (0.01 + feed * Fcd.y)) * B);
+		}
 		
-		fA += (DiffusionA * LaplaceA - A * B * B + feed * (1.0 - A));
-		fB += (DiffusionB * LaplaceB + A * B * B - (kill + feed) * B);
+		
+
 
 		// Divide the sum by the weight but just use rgb
 		// we'll set alpha to 1.0
@@ -171,8 +188,8 @@ if (!gl.getProgramParameter(drawProgram, gl.LINK_STATUS)) {
 let normalData = [];
 for (let i = 0; i < width; i++) {
 	for (let j = 0; j < height; j++) {
-		let d = new Vector2(i, j).dist(new Vector2(width/2, height/2));
-		if(d + Math.random() * 100 > Binit[0] && d + Math.random() * 100 < Binit[1]) {
+		let d = new Vector2(i, j).dist(new Vector2(width / 2, height / 2));
+		if (d + Math.random() * 100 > Binit[0] && d + Math.random() * 100 < Binit[1]) {
 			normalData[(i + j * width) * 4 + 0] = 0;
 			normalData[(i + j * width) * 4 + 1] = 0;
 			normalData[(i + j * width) * 4 + 2] = Math.random();
@@ -215,18 +232,18 @@ const frameBuffers = [];
 // Create and bind the framebuffer
 frameBuffers[0] = gl.createFramebuffer();
 gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffers[0]);
- 
+
 // attach the texture as the first color attachment
 gl.framebufferTexture2D(
-    gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textures[1], level);
+	gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textures[1], level);
 
 // Create and bind the framebuffer
 frameBuffers[1] = gl.createFramebuffer();
 gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffers[1]);
- 
+
 // attach the texture as the first color attachment
 gl.framebufferTexture2D(
-    gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textures[0], level);
+	gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textures[0], level);
 
 // Uniform locations
 var samplerLocs = [];
@@ -237,15 +254,17 @@ let DiffusionALoc = gl.getUniformLocation(computeProgram, 'DiffusionA');
 let DiffusionBLoc = gl.getUniformLocation(computeProgram, 'DiffusionB');
 let feedLoc = gl.getUniformLocation(computeProgram, 'feed');
 let killLoc = gl.getUniformLocation(computeProgram, 'kill');
+let swtchXLoc = gl.getUniformLocation(computeProgram, 'swtchX');
+let swtchYLoc = gl.getUniformLocation(computeProgram, 'swtchY');
 
 let rangeLoc = gl.getUniformLocation(drawProgram, 'range');
 let offsetLoc = gl.getUniformLocation(drawProgram, 'offset');
 
 let verts = [
-    -1.0,  1.0,
-     1.0,  1.0,
-    -1.0, -1.0,
-     1.0, -1.0,
+	-1.0, 1.0,
+	1.0, 1.0,
+	-1.0, -1.0,
+	1.0, -1.0,
 ];
 
 let vertBuffer = gl.createBuffer();
@@ -257,7 +276,7 @@ gl.vertexAttribPointer(
 	positionAttrLocation, 					//Attr location
 	2,										//Number elements per attr
 	gl.FLOAT,								//type
-	gl.FALSE,								
+	gl.FALSE,
 	2 * Float32Array.BYTES_PER_ELEMENT,		//Size of an individual vertex
 	0										//offset
 );
@@ -272,13 +291,13 @@ function animate() {
 	gl.useProgram(computeProgram);
 
 	for (let i = 0; i < step; i++) {
-		gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffers[flipFlop + i%2]);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffers[flipFlop + i % 2]);
 
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 		gl.activeTexture(gl.TEXTURE0 + unit);
-		gl.bindTexture(gl.TEXTURE_2D, textures[flipFlop + i%2]);
+		gl.bindTexture(gl.TEXTURE_2D, textures[flipFlop + i % 2]);
 
 		gl.uniform1i(samplerLocs[0], unit);
 
@@ -286,6 +305,8 @@ function animate() {
 		gl.uniform1f(DiffusionBLoc, DiffusionB);
 		gl.uniform1f(feedLoc, feed);
 		gl.uniform1f(killLoc, kill);
+		gl.uniform1f(swtchXLoc, swtchX);
+		gl.uniform1f(swtchYLoc, swtchY);
 
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 	}
@@ -318,7 +339,7 @@ function restart(x, y) {
 	for (let i = 0; i < width; i++) {
 		for (let j = 0; j < height; j++) {
 			let d = new Vector2(i, j).dist(new Vector2(x, height - y));
-			if(d + Math.random() * 100 > Binit[0] && d + Math.random() * 100 < Binit[1]) {
+			if (d + Math.random() * 100 > Binit[0] && d + Math.random() * 100 < Binit[1]) {
 				normalData[(i + j * width) * 4 + 0] = 0;
 				normalData[(i + j * width) * 4 + 1] = 0;
 				normalData[(i + j * width) * 4 + 2] = Math.random();
@@ -331,7 +352,7 @@ function restart(x, y) {
 			}
 		}
 	}
-	
+
 	data = new Float32Array(normalData);
 
 	gl.bindTexture(gl.TEXTURE_2D, textures[0]);
